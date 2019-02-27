@@ -6,4 +6,5 @@ export CLICOLOR=1
 ulimit -n 1024
 
 source ~/.dotfiles/bash/aliases.sh
+source ~/.dotfiles/bash/base16.sh
 source ~/.dotfiles/bash/prompt.sh
