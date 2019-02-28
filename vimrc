@@ -38,12 +38,6 @@ Plugin 'Quramy/tsuquyomi'
 " see https://github.com/christoomey/vim-tmux-navigator
 Plugin 'christoomey/vim-tmux-navigator'
 
-" Hit <tab> to expand a snippet, and ctrl-j and -k to move forward and
-" backward between the tab stops in the snippet
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<c-j>"
-let g:UltiSnipsJumpBackwardTrigger="<c-k>"
-
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
