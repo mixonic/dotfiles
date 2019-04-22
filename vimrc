@@ -265,3 +265,8 @@ endfunction
 autocmd FileType typescript nmap <buffer> t : <C-u>echo tsuquyomi#hint()<CR>
 autocmd FileType typescript noremap <buffer> <C-]>d :TsuDefinition<CR>
 autocmd FileType typescript noremap <buffer> <C-]>t :TsuTypeDefinition<CR>
+
+if filereadable(expand("~/.vimrc_background"))
+  let base16colorspace=256
+  source ~/.vimrc_background
+endif
