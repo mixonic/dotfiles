@@ -75,7 +75,7 @@ noremap <leader>t :CtrlP<CR>
 noremap <leader>b :CtrlPBuffer<CR>
 
 " leader-f opens Ag searching
-let g:ackprg = 'ag --vimgrep --ignore ^bower_components --ignore ^node_modules --ignore ^tmp --ignore ^dist'
+let g:ackprg = 'ag --vimgrep --ignore bower_components --ignore node_modules --ignore tmp --ignore dist'
 noremap <leader>f :Ack! 
 
 " mappings for fugitive
@@ -169,15 +169,28 @@ au BufNewFile,BufRead *.es6 set filetype=javascript
 highlight ExtraWhitespace ctermbg=red guibg=red
 match ExtraWhitespace /\s\+$/
 
-set wildmode=longest,list,full
-set wildmenu
+
+" Tab completion
+" will insert tab at beginning of line,
+" will use completion if not at beginning
+set wildmode=list:longest,list:full
+function! InsertTabWrapper()
+    let col = col('.') - 1
+    if !col || getline('.')[col - 1] !~ '\k'
+        return "\<Tab>"
+    else
+        return "\<C-p>"
+    endif
+endfunction
+inoremap <Tab> <C-r>=InsertTabWrapper()<CR>
+inoremap <S-Tab> <C-n>
 
 au WinLeave * set nocursorline nocursorcolumn
 set cursorline
 
 set laststatus=2
 
-set wildignore+=*/tmp/*,*/node_modules/*,*.so,*.swp,*.zip     " Linux/MacOSX"
+set wildignore+=*/tmp/*,*/node_modules/*,*/bower_components/**.so,*.swp,*.zip     " Linux/MacOSX"
 
 " Save your backups to a less annoying place than the current directory.
 " If you have .vim-backup in the current directory, it'll use that.
@@ -219,18 +232,21 @@ if exists("+undofile")
   set undofile
 endif
 
-" speed up ctr-p file matcher by using `ag` if it is around
-" see http://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity/
-let g:ctrlp_use_caching = 0
+" Use The Silver Searcher https://github.com/ggreer/the_silver_searcher
 if executable('ag')
-    set grepprg=ag\ --nogroup\ --nocolor
+  " Use Ag over Grep
+  set grepprg=ag\ --nogroup\ --nocolor
 
-    let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
-else
-  let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files . -co --exclude-standard', 'find %s -type f']
-  let g:ctrlp_prompt_mappings = {
-    \ 'AcceptSelection("e")': ['<space>', '<cr>', '<2-LeftMouse>'],
-    \ }
+  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
+  let g:ctrlp_user_command = 'ag --literal --files-with-matches --nocolor --hidden -g "" %s'
+
+  " ag is fast enough that CtrlP doesn't need to cache
+  let g:ctrlp_use_caching = 0
+
+  if !exists(":Ag")
+    command -nargs=+ -complete=file -bar Ag silent! grep! <args>|cwindow|redraw!
+    nnoremap \ :Ag<SPACE>
+  endif
 endif
 
 " Adds a dummy sign that ensures that the sign column is always shown and
@@ -265,6 +281,13 @@ endfunction
 autocmd FileType typescript nmap <buffer> t : <C-u>echo tsuquyomi#hint()<CR>
 autocmd FileType typescript noremap <buffer> <C-]>d :TsuDefinition<CR>
 autocmd FileType typescript noremap <buffer> <C-]>t :TsuTypeDefinition<CR>
+
+" Treat <li> and <p> tags like the block tags they are
+let g:html_indent_tags = 'li\|p'
+
+" Open new split panes to right and bottom, which feels more natural
+set splitbelow
+set splitright
 
 if filereadable(expand("~/.vimrc_background"))
   let base16colorspace=256
