@@ -20,10 +20,10 @@ echo "source-file ~/.dotfiles/tmux.conf" >> ~/.tmux.conf
 echo "so ~/.dotfiles/vimrc" >> ~/.vimrc
 echo -e "[include]\n  path = ~/.dotfiles/gitconfig" >> ~/.gitconfig
 git clone https://github.com/chriskempson/base16-shell.git ~/.config/base16-shell
-echo -e "if filereadable(expand(\"~/.vimrc_background\"))\n  let
-base16colorspace=256\n  source ~/.vimrc_background\nendif""
 git clone https://github.com/VundleVim/Vundle.vim.git ~/.dotfiles/vim/bundle/Vundle.vim
 vim +PluginInstall +qall
+source .bash_profile
+base16_railscasts
 ```
 
 ### Notes

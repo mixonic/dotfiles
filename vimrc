@@ -18,7 +18,9 @@ Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'scrooloose/nerdtree'
 Plugin 'ervandew/supertab'
 Plugin 'vim-airline/vim-airline'
-Plugin 'zerowidth/vim-copy-as-rtf'
+if has('macunix')
+  Plugin 'zerowidth/vim-copy-as-rtf'
+endif
 Plugin 'mustache/vim-mustache-handlebars'
 Plugin 'pangloss/vim-javascript'
 Plugin 'tpope/vim-liquid'
