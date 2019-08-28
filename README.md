@@ -6,11 +6,9 @@ Built on:
 ## Installation
 
 ```
-brew install vim
-brew install the_silver_searcher
+brew install vim fd the_silver_searcher cmake boost tmux
 brew install bash-completion # optional
 brew install git # suggested, required for bash completion
-brew install tmux
 git clone git@github.com:mixonic/dotfiles.git ~/.dotfiles
 # if using bash:
 echo "source ~/.dotfiles/bash.sh" >> ~/.bash_profile
@@ -22,6 +20,7 @@ echo -e "[include]\n  path = ~/.dotfiles/gitconfig" >> ~/.gitconfig
 git clone https://github.com/chriskempson/base16-shell.git ~/.config/base16-shell
 git clone https://github.com/VundleVim/Vundle.vim.git ~/.dotfiles/vim/bundle/Vundle.vim
 vim +PluginInstall +qall
+cd ~/.dotfiles/vim/bundle/cpsm/; ./install.sh
 source .bash_profile
 base16_railscasts
 ```

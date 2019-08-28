@@ -15,6 +15,7 @@ call vundle#begin('~/.dotfiles/vim/bundle')
 Plugin 'VundleVim/Vundle.vim' " Required by Vundle, must be first
 Plugin 'mileszs/ack.vim'
 Plugin 'ctrlpvim/ctrlp.vim'
+Plugin 'nixprime/cpsm'
 Plugin 'scrooloose/nerdtree'
 Plugin 'ervandew/supertab'
 Plugin 'vim-airline/vim-airline'
@@ -234,21 +235,10 @@ if exists("+undofile")
   set undofile
 endif
 
-" Use The Silver Searcher https://github.com/ggreer/the_silver_searcher
-if executable('ag')
-  " Use Ag over Grep
-  set grepprg=ag\ --nogroup\ --nocolor
-
-  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
-  let g:ctrlp_user_command = 'ag --literal --files-with-matches --nocolor --hidden -g "" %s'
-
-  " ag is fast enough that CtrlP doesn't need to cache
+if executable('fd')
+  let g:ctrlp_user_command = 'fd --type f --color=never "" %s'
   let g:ctrlp_use_caching = 0
-
-  if !exists(":Ag")
-    command -nargs=+ -complete=file -bar Ag silent! grep! <args>|cwindow|redraw!
-    nnoremap \ :Ag<SPACE>
-  endif
+  let g:ctrlp_match_func = {'match': 'cpsm#CtrlPMatch'}
 endif
 
 " Adds a dummy sign that ensures that the sign column is always shown and
