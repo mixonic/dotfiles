@@ -19,6 +19,7 @@ Plugin 'nixprime/cpsm'
 Plugin 'scrooloose/nerdtree'
 Plugin 'ervandew/supertab'
 Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
 if has('macunix')
   Plugin 'zerowidth/vim-copy-as-rtf'
 endif
@@ -248,6 +249,7 @@ autocmd BufEnter * sign define dummy
 autocmd BufEnter * execute 'sign place 9999 line=1 name=dummy buffer=' . bufnr('')
 
 let g:airline#extensions#branch#enabled = 0
+let g:airline_theme='base16'
 
 " Enable mouse, option-click for normal clicks
 set mouse=a
