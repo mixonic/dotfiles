@@ -14,8 +14,11 @@ call vundle#begin('~/.dotfiles/vim/bundle')
 " Install vundle packages
 Plugin 'VundleVim/Vundle.vim' " Required by Vundle, must be first
 Plugin 'mileszs/ack.vim'
-Plugin 'ctrlpvim/ctrlp.vim'
-Plugin 'nixprime/cpsm'
+" Plugin 'ctrlpvim/ctrlp.vim'
+" Plugin 'nixprime/cpsm'
+" Plugin 'liuchengxu/vim-clap' ", { 'do': ':Clap install-binary' }
+Plugin 'junegunn/fzf'
+Plugin 'junegunn/fzf.vim'
 Plugin 'scrooloose/nerdtree'
 Plugin 'ervandew/supertab'
 Plugin 'vim-airline/vim-airline'
@@ -73,10 +76,10 @@ noremap <C-l> <C-W>l
 noremap <leader>s :b#<CR>
 
 " ctrl-p
-noremap <leader>t :CtrlP<CR>
+" noremap <leader>t :CtrlP<CR>
 
 " Open buffers
-noremap <leader>b :CtrlPBuffer<CR>
+" noremap <leader>b :CtrlPBuffer<CR>
 
 " leader-f opens Ag searching
 let g:ackprg = 'ag --vimgrep --ignore bower_components --ignore node_modules --ignore tmp --ignore dist'
@@ -236,11 +239,11 @@ if exists("+undofile")
   set undofile
 endif
 
-if executable('fd')
-  let g:ctrlp_user_command = 'fd --type f --color=never "" %s'
-  let g:ctrlp_use_caching = 0
-  let g:ctrlp_match_func = {'match': 'cpsm#CtrlPMatch'}
-endif
+" if executable('fd')
+"   let g:ctrlp_user_command = 'fd --type f --color=never "" %s'
+"   let g:ctrlp_use_caching = 0
+"   " let g:ctrlp_match_func = {'match': 'cpsm#CtrlPMatch'}
+" endif
 
 " Adds a dummy sign that ensures that the sign column is always shown and
 " won't flicker on/off when syntastic finds errors
@@ -287,3 +290,30 @@ if filereadable(expand("~/.vimrc_background"))
   let base16colorspace=256
   source ~/.vimrc_background
 endif
+
+function! RipgrepFzf(query, fullscreen)
+  let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case %s || true'
+  let initial_command = printf(command_fmt, shellescape(a:query))
+  let reload_command = printf(command_fmt, '{q}')
+  let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
+  call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
+endfunction
+
+command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
+
+command! -bang -nargs=? -complete=dir 
+  \ ProjectFiles call fzf#vim#files(<q-args>, {'source': 'fd'}, <bang>0)
+
+let g:fzf_action = {
+    \ 'ctrl-s': 'split',
+    \ 'ctrl-v': 'vsplit'
+    \ }
+noremap <leader>t :ProjectFiles<CR>
+noremap <leader>b :History<CR>
+noremap <leader>r :RG<CR>
+augroup fzf
+  autocmd!
+  autocmd! FileType fzf
+  autocmd  FileType fzf set laststatus=0 noshowmode noruler
+    \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
+augroup END

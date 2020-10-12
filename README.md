@@ -6,9 +6,7 @@ Built on:
 ## Installation
 
 ```
-brew install vim fd the_silver_searcher cmake boost tmux
-brew install bash-completion # optional
-brew install git # suggested, required for bash completion
+brew install vim fd the_silver_searcher cmake boost tmux fzf bash-completion git
 git clone git@github.com:mixonic/dotfiles.git ~/.dotfiles
 # if using bash:
 echo "source ~/.dotfiles/bash.sh" >> ~/.bash_profile
