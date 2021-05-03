@@ -302,7 +302,7 @@ endfunction
 command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
 
 command! -bang -nargs=? -complete=dir 
-  \ ProjectFiles call fzf#vim#files(<q-args>, {'source': 'fd'}, <bang>0)
+  \ ProjectFiles call fzf#vim#files(<q-args>, {'source': (executable('fdfind') ? 'fdfind' : 'fd')}, <bang>0)
 
 let g:fzf_action = {
     \ 'ctrl-s': 'split',

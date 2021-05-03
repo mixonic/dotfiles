@@ -6,12 +6,22 @@ Built on:
 ## Installation
 
 ```
+# On macOS
 brew install vim fd the_silver_searcher cmake boost tmux fzf bash-completion git
+
+# On Ubuntu
+apt install rg fd-find silversearcher-ag cmake tmux fzf bash-completion git
+
+# Clone this repo
 git clone git@github.com:mixonic/dotfiles.git ~/.dotfiles
-# if using bash:
+
+# If using bash:
 echo "source ~/.dotfiles/bash.sh" >> ~/.bash_profile
-# if using zsh:
+
+# If using zsh:
 echo "source ~/.dotfiles/zsh.sh" >> ~/.zshrc
+
+# The rest of it
 echo "source-file ~/.dotfiles/tmux.conf" >> ~/.tmux.conf
 echo "so ~/.dotfiles/vimrc" >> ~/.vimrc
 echo -e "[include]\n  path = ~/.dotfiles/gitconfig" >> ~/.gitconfig
