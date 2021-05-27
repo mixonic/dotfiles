@@ -5,51 +5,45 @@ let g:airline_right_sep=''
 set encoding=utf-8
 
 set nocompatible              " be iMproved, required
-filetype off                  " required
 
-" set the runtime path to include Vundle and initialize
-set runtimepath+=~/.dotfiles/vim/bundle/Vundle.vim
-call vundle#begin('~/.dotfiles/vim/bundle')
-
-" Install vundle packages
-Plugin 'VundleVim/Vundle.vim' " Required by Vundle, must be first
-Plugin 'mileszs/ack.vim'
-" Plugin 'ctrlpvim/ctrlp.vim'
-" Plugin 'nixprime/cpsm'
-" Plugin 'liuchengxu/vim-clap' ", { 'do': ':Clap install-binary' }
-Plugin 'junegunn/fzf'
-Plugin 'junegunn/fzf.vim'
-Plugin 'scrooloose/nerdtree'
-Plugin 'ervandew/supertab'
-Plugin 'vim-airline/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
-if has('macunix')
-  Plugin 'zerowidth/vim-copy-as-rtf'
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent execute '!curl -fLo ~/.vim/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
-Plugin 'mustache/vim-mustache-handlebars'
-Plugin 'pangloss/vim-javascript'
-Plugin 'tpope/vim-liquid'
-Plugin 'tpope/vim-markdown'
-Plugin 'tpope/vim-rails'
-Plugin 'vim-ruby/vim-ruby'
-Plugin 'danielwe/base16-vim'
-Plugin 'tpope/vim-fugitive'
-Plugin 'tpope/vim-surround'
-Plugin 'vim-syntastic/syntastic'
-" Use leader-cc to comment out visual selected blocks
-Plugin 'scrooloose/nerdcommenter'
-" see https://github.com/easymotion/vim-easymotion
-Plugin 'easymotion/vim-easymotion'
-Plugin 'leafgarland/typescript-vim'
-Plugin 'Quramy/tsuquyomi'
-" see https://github.com/christoomey/vim-tmux-navigator
-Plugin 'christoomey/vim-tmux-navigator'
 
-" All of your Plugins must be added before the following line
-call vundle#end()            " required
-filetype plugin indent on    " required
-" To ignore plugin indent changes, instead use:
-"filetype plugin on
+call plug#begin('~/.vim/plugged')
+
+Plug 'VundleVim/Vundle.vim' " Required by Vundle, must be first
+Plug 'mileszs/ack.vim'
+Plug 'junegunn/fzf'
+Plug 'junegunn/fzf.vim'
+Plug 'scrooloose/nerdtree'
+Plug 'ervandew/supertab'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+if has('macunix')
+  Plug 'zerowidth/vim-copy-as-rtf'
+endif
+Plug 'mustache/vim-mustache-handlebars'
+Plug 'pangloss/vim-javascript'
+Plug 'tpope/vim-liquid'
+Plug 'tpope/vim-markdown'
+Plug 'tpope/vim-rails'
+Plug 'vim-ruby/vim-ruby'
+Plug 'danielwe/base16-vim'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-surround'
+Plug 'vim-syntastic/syntastic'
+" Use leader-cc to comment out visual selected blocks
+Plug 'scrooloose/nerdcommenter'
+" see https://github.com/easymotion/vim-easymotion
+Plug 'easymotion/vim-easymotion'
+Plug 'leafgarland/typescript-vim'
+Plug 'Quramy/tsuquyomi'
+" see https://github.com/christoomey/vim-tmux-navigator
+Plug 'christoomey/vim-tmux-navigator'
+
+call plug#end()
 
 " center the cursor in the screen vertically
 set scrolloff=10000
@@ -168,7 +162,6 @@ set guioptions-=T
 set undofile
 
 syn on
-syntax enable
 autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
 
 au BufNewFile,BufRead *.es6 set filetype=javascript
@@ -238,12 +231,6 @@ if exists("+undofile")
   set undodir+=~/.vim/undo//
   set undofile
 endif
-
-" if executable('fd')
-"   let g:ctrlp_user_command = 'fd --type f --color=never "" %s'
-"   let g:ctrlp_use_caching = 0
-"   " let g:ctrlp_match_func = {'match': 'cpsm#CtrlPMatch'}
-" endif
 
 " Adds a dummy sign that ensures that the sign column is always shown and
 " won't flicker on/off when syntastic finds errors

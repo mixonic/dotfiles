@@ -26,9 +26,7 @@ echo "source-file ~/.dotfiles/tmux.conf" >> ~/.tmux.conf
 echo "so ~/.dotfiles/vimrc" >> ~/.vimrc
 echo -e "[include]\n  path = ~/.dotfiles/gitconfig" >> ~/.gitconfig
 git clone https://github.com/chriskempson/base16-shell.git ~/.config/base16-shell
-git clone https://github.com/VundleVim/Vundle.vim.git ~/.dotfiles/vim/bundle/Vundle.vim
-vim +PluginInstall +qall
-cd ~/.dotfiles/vim/bundle/cpsm/; ./install.sh
+vim +PlugInstall
 source .bash_profile
 base16_railscasts
 ```
