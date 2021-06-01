@@ -24,7 +24,7 @@ Plug 'vim-airline/vim-airline-themes'
 if has('macunix')
   Plug 'zerowidth/vim-copy-as-rtf'
 endif
-Plug 'mustache/vim-mustache-handlebars'
+Plug 'mustache/vim-ember-hbs'
 Plug 'pangloss/vim-javascript'
 Plug 'tpope/vim-liquid'
 Plug 'tpope/vim-markdown'
@@ -48,6 +48,8 @@ Plug 'prettier/vim-prettier', {
   \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'yaml', 'html'] }
 
 call plug#end()
+
+let syntastic_mode_map = { 'passive_filetypes': ['html'] }
 
 " center the cursor in the screen vertically
 set scrolloff=10000
