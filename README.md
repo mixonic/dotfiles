@@ -22,6 +22,8 @@ echo "source ~/.dotfiles/bash.sh" >> ~/.bash_profile
 echo "source ~/.dotfiles/zsh.sh" >> ~/.zshrc
 
 # The rest of it
+curl https://get.volta.sh | bash
+volta install node
 echo "source-file ~/.dotfiles/tmux.conf" >> ~/.tmux.conf
 echo "so ~/.dotfiles/vimrc" >> ~/.vimrc
 echo -e "[include]\n  path = ~/.dotfiles/gitconfig" >> ~/.gitconfig
