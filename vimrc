@@ -24,7 +24,7 @@ Plug 'vim-airline/vim-airline-themes'
 if has('macunix')
   Plug 'zerowidth/vim-copy-as-rtf'
 endif
-Plug 'mustache/vim-ember-hbs'
+Plug 'joukevandermaas/vim-ember-hbs'
 Plug 'pangloss/vim-javascript'
 Plug 'tpope/vim-liquid'
 Plug 'tpope/vim-markdown'
@@ -33,6 +33,7 @@ Plug 'vim-ruby/vim-ruby'
 Plug 'danielwe/base16-vim'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
+Plug 'alvan/vim-closetag'
 Plug 'vim-syntastic/syntastic'
 " Use leader-cc to comment out visual selected blocks
 Plug 'scrooloose/nerdcommenter'
@@ -168,13 +169,19 @@ set guioptions-=T
 set undofile
 
 syn on
-autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
+" Stop vim trying to syntax highlight long lines, typically found in minified
+" files. This greatly reduces lag yet is still wide enough for large
+" displays
+set synmaxcol=500
 
-au BufNewFile,BufRead *.es6 set filetype=javascript
+" With :set hidden, opening a new file when the current buffer has unsaved
+" changes causes files to be hidden instead of closed
+set hidden
+
+autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
 
 highlight ExtraWhitespace ctermbg=red guibg=red
 match ExtraWhitespace /\s\+$/
-
 
 " Tab completion
 " will insert tab at beginning of line,
@@ -271,9 +278,6 @@ endfunction
 autocmd FileType typescript nmap <buffer> t : <C-u>echo tsuquyomi#hint()<CR>
 autocmd FileType typescript noremap <buffer> <C-]>d :TsuDefinition<CR>
 autocmd FileType typescript noremap <buffer> <C-]>t :TsuTypeDefinition<CR>
-
-" Treat <li> and <p> tags like the block tags they are
-let g:html_indent_tags = 'li\|p'
 
 " Open new split panes to right and bottom, which feels more natural
 set splitbelow
