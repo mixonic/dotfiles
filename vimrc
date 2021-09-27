@@ -177,6 +177,8 @@ set synmaxcol=500
 " With :set hidden, opening a new file when the current buffer has unsaved
 " changes causes files to be hidden instead of closed
 set hidden
+set autoread
+au FocusGained,BufEnter * :checktime
 
 autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
 
