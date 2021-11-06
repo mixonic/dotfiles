@@ -57,17 +57,19 @@ set scrolloff=10000
 
 let mapleader = ";"
 
-" Mitch setting
-nmap , ;
+" Mitch setting, in normal mode , is valid leader
+" nmap , ;
 
-inoremap <leader>j <Esc>
-vnoremap <leader>j <Esc>
-nnoremap <leader>j <Nop>
+" inoremap <leader>j <Esc>
+" vnoremap <leader>j <Esc>
+" nnoremap <leader>j <Nop>
 inoremap <leader>w <Esc>:w<CR>
 vnoremap <leader>w <Esc>:w<CR>
 
 noremap <leader>q :q<CR>
+noremap <leader>!q :q!<CR>
 noremap <leader>w :w<CR>
+noremap <leader>!w :w!<CR>
 
 noremap <C-h> <C-W>h
 noremap <C-j> <C-W>j
@@ -97,6 +99,8 @@ noremap <leader>gb :Gblame<CR>
 
 " leader-d toggles NERDTree drawer
 noremap <leader>d :NERDTreeToggle<CR>
+" leader-c toggles finds current file
+noremap <leader>x :NERDTreeFind<CR>
 
 " redraw the screen
 noremap <leader>r :redraw!<CR>
@@ -206,7 +210,8 @@ set cursorline
 
 set laststatus=2
 
-set wildignore+=*/tmp/*,*/node_modules/*,*/bower_components/**.so,*.swp,*.zip     " Linux/MacOSX"
+" set wildignore+=*/tmp/*,*/node_modules/*,*/bower_components/*,*.so,*.swp,*.zip
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " Linux/MacOSX"
 
 " Save your backups to a less annoying place than the current directory.
 " If you have .vim-backup in the current directory, it'll use that.
