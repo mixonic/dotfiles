@@ -62,6 +62,7 @@ nmap , ;
 
 inoremap <leader>j <Esc>
 vnoremap <leader>j <Esc>
+nnoremap <leader>j <Nop>
 inoremap <leader>w <Esc>:w<CR>
 vnoremap <leader>w <Esc>:w<CR>
 
