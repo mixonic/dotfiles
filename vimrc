@@ -91,15 +91,35 @@ noremap <leader>f :Ack!
 
 " mappings for fugitive
 " leader-gs opens git status
-noremap <leader>gs :Gstatus<CR>
+noremap <leader>gs :Git status<CR>
 " leader-gc opens git commit
-noremap <leader>gc :Gcommit<CR>
+noremap <leader>gc :Git commit<CR>
 " leader-gb opens git blame
-noremap <leader>gb :Gblame<CR>
+noremap <leader>gb :Git blame<CR>
+
+" Check if NERDTree is open or active
+function! IsNERDTreeOpen()
+  return exists("t:NERDTreeBufName") && (bufwinnr(t:NERDTreeBufName) != -1)
+endfunction
+
+function! CheckIfCurrentBufferIsFile()
+  return strlen(expand('%')) > 0
+endfunction
+
+function! ToggleTree()
+  if CheckIfCurrentBufferIsFile()
+    if IsNERDTreeOpen()
+      NERDTreeClose
+    else
+      NERDTreeFind
+    endif
+  else
+    NERDTree
+  endif
+endfunction
 
 " leader-d toggles NERDTree drawer
-noremap <leader>d :NERDTreeToggle<CR>
-" leader-c toggles finds current file
+noremap <leader>d :call ToggleTree()<CR>
 noremap <leader>x :NERDTreeFind<CR>
 
 " redraw the screen
