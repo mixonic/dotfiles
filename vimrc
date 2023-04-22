@@ -179,6 +179,13 @@ augroup CursorLine
 augroup END
 highlight  CursorLine cterm=None ctermbg=236
 
+" Drop the underline on current line number
+hi CursorLineNR cterm=none
+augroup CLNRSet
+    autocmd! ColorScheme * hi CursorLineNR cterm=none
+augroup END
+
+
 " use ag instead of ack https://github.com/ggreer/the_silver_searcher
 " let g:ackprg = 'ag --nogroup --nocolor --column'
 
@@ -230,9 +237,6 @@ function! InsertTabWrapper()
 endfunction
 inoremap <Tab> <C-r>=InsertTabWrapper()<CR>
 inoremap <S-Tab> <C-n>
-
-au WinLeave * set nocursorline nocursorcolumn
-set cursorline
 
 set laststatus=2
 
