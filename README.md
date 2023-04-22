@@ -31,7 +31,7 @@ echo "so ~/.dotfiles/vimrc" >> ~/.vimrc
 echo -e "[include]\n  path = ~/.dotfiles/gitconfig" >> ~/.gitconfig
 git clone https://github.com/chriskempson/base16-shell.git ~/.config/base16-shell
 vim +PlugInstall
-source .bash_profile
+source .bash_profile # if using bash
 gh auth login
 ```
 

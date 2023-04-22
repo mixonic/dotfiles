@@ -3,10 +3,10 @@ export EDITOR=vim
 export CLICOLOR=1
 
 # default open files in OSX is very low
-ulimit -n 2048
+# ulimit -n 2048
 
 # default allowable memory for node is very low
-export NODE_OPTIONS=--max_old_space_size=5120
+# export NODE_OPTIONS=--max_old_space_size=5120
 
 # Volta setup
 export VOLTA_HOME="$HOME/.volta"

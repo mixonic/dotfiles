@@ -1,0 +1,31 @@
+autoload -Uz vcs_info
+
+zstyle ':vcs_info:*' enable git
+zstyle ':vcs_info:*' formats "%F{cyan}%c%u(%b)%f/%S"
+zstyle ':vcs_info:*' actionformats "%F{cyan}%c%u(%b)%f/%S %a"
+zstyle ':vcs_info:*' stagedstr "%F{green}"
+zstyle ':vcs_info:*' unstagedstr "%F{red}"
+zstyle ':vcs_info:*' check-for-changes true
+
+zstyle ':vcs_info:git*+set-message:*' hooks git-untracked
+
++vi-git-untracked() {
+  if git --no-optional-locks status --porcelain 2> /dev/null | grep -q "^??"; then
+    hook_com[staged]+="%F{red}"
+  fi
+}
+
+ZLE_RPROMPT_INDENT=0
+
+precmd() {
+  vcs_info
+  RPROMPT=""
+  if [[ -z ${vcs_info_msg_0_} ]]; then
+    prompt="[%1~] "
+  else
+    prompt="[${vcs_info_msg_0_:s/\/./}] "
+    if [[ $(pwd) = $(git rev-parse --show-toplevel) ]]; then
+      RPROMPT="%F{240}%1~%f"
+    fi
+  fi
+}
