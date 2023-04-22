@@ -126,7 +126,7 @@ noremap <leader>x :NERDTreeFind<CR>
 noremap <leader>r :redraw!<CR>
 
 " vertical bar
-set cc=80
+" set cc=81
 
 " Taken from unimpaired paste plugin
 " Type "yo" or "yO" to switch to insert mode with "paste" set on the line below/above
@@ -171,9 +171,13 @@ set ignorecase
 set smartcase
 set incsearch
 
+" Make sure cursorlines appear when swapping buffers
+augroup CursorLine
+    au!
+    au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
+    au WinLeave * setlocal nocursorline
+augroup END
 highlight  CursorLine cterm=None ctermbg=236
-autocmd InsertEnter * highlight  CursorLine cterm=None ctermbg=234
-autocmd InsertLeave * highlight  CursorLine cterm=None ctermbg=236
 
 " use ag instead of ack https://github.com/ggreer/the_silver_searcher
 " let g:ackprg = 'ag --nogroup --nocolor --column'
@@ -187,6 +191,8 @@ set tabstop=2
 set expandtab
 set ruler
 set number
+set signcolumn=no
+set numberwidth=3
 set backspace=2
 set vb t_vb=
 set guioptions-=T
