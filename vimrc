@@ -25,7 +25,7 @@ if has('macunix')
   Plug 'zerowidth/vim-copy-as-rtf'
 endif
 Plug 'joukevandermaas/vim-ember-hbs'
-Plug 'pangloss/vim-javascript'
+Plug 'yuezk/vim-js'
 Plug 'tpope/vim-liquid'
 Plug 'tpope/vim-markdown'
 Plug 'tpope/vim-rails'
@@ -40,7 +40,9 @@ Plug 'vim-syntastic/syntastic'
 Plug 'scrooloose/nerdcommenter'
 " see https://github.com/easymotion/vim-easymotion
 Plug 'easymotion/vim-easymotion'
+
 Plug 'leafgarland/typescript-vim'
+Plug 'maxmellon/vim-jsx-pretty'
 Plug 'Quramy/tsuquyomi'
 " see https://github.com/christoomey/vim-tmux-navigator
 Plug 'christoomey/vim-tmux-navigator'
