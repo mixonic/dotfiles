@@ -71,8 +71,9 @@ let g:ale_sign_error = 'E'
 let g:ale_sign_warning = 'W'
 let g:ale_sign_column_always = 1
 let g:airline#extensions#ale#enabled = 1
+let g:airline_skip_empty_sections = 1
 
-" --- yegappan/lsp (LSP client for tsserver and Glint) ---
+" --- yegappan/lsp (LSP client for tsserver) ---
 let lspOpts = #{
 \   autoHighlightDiags: v:true,
 \   aleSupport: v:true,
@@ -81,31 +82,46 @@ autocmd User LspSetup call LspOptionsSet(lspOpts)
 
 let lspServers = [#{
 \     name: 'typescript-language-server',
-\     filetype: ['typescript', 'typescriptreact'],
+\     filetype: ['typescript', 'typescriptreact', 'javascriptreact'],
 \     path: exepath('typescript-language-server'),
 \     args: ['--stdio'],
 \   },
 \ ]
 
-" Add Glint server if available in the project
-let s:glint_path = exepath('glint-language-server')
-if !empty(s:glint_path)
-  call add(lspServers, #{
-  \     name: 'glint-language-server',
-  \     filetype: ['glimmer'],
-  \     path: s:glint_path,
-  \     args: ['--stdio'],
-  \     runIfSearch: ['ember-cli-build.js', '.glintrc.yml', '.glintrc', '.glintrc.json'],
-  \   })
-endif
-
 autocmd User LspSetup call LspAddServer(lspServers)
 
 " Glimmer TypeScript/JavaScript (.gts/.gjs) filetype detection
-" Uses 'glimmer' filetype so Glint LSP activates instead of tsserver.
-" Falls back to typescriptreact syntax for highlighting.
-autocmd BufNewFile,BufRead *.gts set filetype=glimmer | set syntax=typescriptreact
-autocmd BufNewFile,BufRead *.gjs set filetype=glimmer | set syntax=javascriptreact
+" Uses typescriptreact/javascriptreact so tsserver provides LSP features
+" (hover, go-to-def, etc.). Glint V2's language server uses custom Volar.js
+" protocol extensions incompatible with generic LSP clients.
+" tsserver doesn't understand <template> blocks so it produces many false
+" positive diagnostics. ALE is disabled for these buffers; use ember-tsc
+" (below) for type checking instead.
+autocmd BufNewFile,BufRead *.gts set filetype=typescriptreact | let b:ale_enabled = 0
+autocmd BufNewFile,BufRead *.gjs set filetype=javascriptreact | let b:ale_enabled = 0
+
+" Pre-save type check for .gts/.gjs files using ember-tsc.
+" ember-tsc understands <template> blocks; regular tsc does not.
+" Errors go to the location list (per-window, not the global quickfix).
+" Use :lopen to view errors, :lnext/:lprev to navigate.
+function! s:EmberTscCheck()
+  let l:dir = expand('%:p:h')
+  let l:ember_tsc = findfile('node_modules/.bin/ember-tsc', l:dir . ';')
+  if empty(l:ember_tsc)
+    return
+  endif
+  let l:ember_tsc = fnamemodify(l:ember_tsc, ':p')
+  let l:output = system(l:ember_tsc . ' --noEmit 2>&1')
+  if v:shell_error
+    lexpr l:output
+    echo 'ember-tsc: errors found (:lopen to view)'
+  else
+    lclose
+    call setloclist(0, [])
+    echo 'ember-tsc: ok'
+  endif
+endfunction
+autocmd BufWritePost *.gts,*.gjs call s:EmberTscCheck()
 
 " center the cursor in the screen vertically
 set scrolloff=10000
@@ -219,8 +235,9 @@ au BufRead,BufNewFile *.md setlocal textwidth=80
 :set hlsearch
 " Clear highlighted search terms by hitting return
 :nnoremap <CR> :nohlsearch<cr>
-" Restore default <CR> in quickfix/location list windows
+" Restore default <CR> and add 'o' in quickfix/location list windows
 autocmd BufReadPost quickfix nnoremap <buffer> <CR> <CR>
+autocmd BufReadPost quickfix nnoremap <buffer> o <CR>
 
 " Better case searching
 " http://linuxcommando.blogspot.com/2008/06/smart-case-insensitive-incremental.html
@@ -345,11 +362,11 @@ let g:airline_theme='base16'
 " Enable mouse, option-click for normal clicks
 set mouse=a
 
-" LSP keybindings (replacing tsuquyomi)
-autocmd FileType typescript,typescriptreact,glimmer nmap <buffer> t :LspHover<CR>
-autocmd FileType typescript,typescriptreact,glimmer noremap <buffer> <C-]>d :LspGotoDefinition<CR>
-autocmd FileType typescript,typescriptreact,glimmer noremap <buffer> <C-]>t :LspGotoTypeDef<CR>
-autocmd FileType typescript,typescriptreact,glimmer noremap <buffer> <C-]>r :LspShowReferences<CR>
+" LSP keybindings
+autocmd FileType typescript,typescriptreact,javascriptreact nmap <buffer> t :LspHover<CR>
+autocmd FileType typescript,typescriptreact,javascriptreact noremap <buffer> <C-]>d :LspGotoDefinition<CR>
+autocmd FileType typescript,typescriptreact,javascriptreact noremap <buffer> <C-]>t :LspGotoTypeDef<CR>
+autocmd FileType typescript,typescriptreact,javascriptreact noremap <buffer> <C-]>r :LspShowReferences<CR>
 
 " Open new split panes to right and bottom, which feels more natural
 set splitbelow
