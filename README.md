@@ -25,7 +25,7 @@ echo "source ~/.dotfiles/bash.sh" >> ~/.bash_profile
 # The rest of it
 curl https://get.volta.sh | bash
 # ...read the output carefully
-volta install node
+volta install node typescript typescript-language-server
 echo "source-file ~/.dotfiles/tmux.conf" >> ~/.tmux.conf
 echo "so ~/.dotfiles/vimrc" >> ~/.vimrc
 echo -e "[include]\n  path = ~/.dotfiles/gitconfig" >> ~/.gitconfig

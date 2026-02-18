@@ -25,7 +25,8 @@ if has('macunix')
   Plug 'zerowidth/vim-copy-as-rtf'
 endif
 Plug 'joukevandermaas/vim-ember-hbs'
-Plug 'yuezk/vim-js'
+Plug 'dense-analysis/ale'
+Plug 'yegappan/lsp'
 Plug 'tpope/vim-liquid'
 Plug 'tpope/vim-markdown'
 Plug 'tpope/vim-rails'
@@ -35,15 +36,11 @@ Plug 'tpope/vim-fugitive'
 Plug 'ruanyl/vim-gh-line'
 Plug 'tpope/vim-surround'
 Plug 'alvan/vim-closetag'
-Plug 'vim-syntastic/syntastic'
 " Use leader-cc to comment out visual selected blocks
 Plug 'scrooloose/nerdcommenter'
 " see https://github.com/easymotion/vim-easymotion
 Plug 'easymotion/vim-easymotion'
 
-Plug 'leafgarland/typescript-vim'
-Plug 'maxmellon/vim-jsx-pretty'
-Plug 'Quramy/tsuquyomi'
 " see https://github.com/christoomey/vim-tmux-navigator
 Plug 'christoomey/vim-tmux-navigator'
 " post install (yarn install | npm install) then load plugin only for editing supported files
@@ -53,7 +50,62 @@ Plug 'prettier/vim-prettier', {
 
 call plug#end()
 
-let syntastic_mode_map = { 'passive_filetypes': ['html'] }
+" --- ALE (linting and fixing) ---
+" ALE handles eslint, prettier, and ember-template-lint.
+" LSP diagnostics are forwarded from yegappan/lsp via aleSupport.
+let g:ale_linters = {
+\   'typescript': ['eslint'],
+\   'typescriptreact': ['eslint'],
+\   'javascript': ['eslint'],
+\   'javascriptreact': ['eslint'],
+\   'handlebars': ['ember-template-lint'],
+\ }
+let g:ale_fixers = {
+\   '*': ['remove_trailing_lines', 'trim_whitespace'],
+\   'typescript': ['prettier', 'eslint'],
+\   'typescriptreact': ['prettier', 'eslint'],
+\   'javascript': ['prettier', 'eslint'],
+\   'javascriptreact': ['prettier', 'eslint'],
+\ }
+let g:ale_sign_error = 'E'
+let g:ale_sign_warning = 'W'
+let g:ale_sign_column_always = 1
+let g:airline#extensions#ale#enabled = 1
+
+" --- yegappan/lsp (LSP client for tsserver and Glint) ---
+let lspOpts = #{
+\   autoHighlightDiags: v:true,
+\   aleSupport: v:true,
+\ }
+autocmd User LspSetup call LspOptionsSet(lspOpts)
+
+let lspServers = [#{
+\     name: 'typescript-language-server',
+\     filetype: ['typescript', 'typescriptreact'],
+\     path: exepath('typescript-language-server'),
+\     args: ['--stdio'],
+\   },
+\ ]
+
+" Add Glint server if available in the project
+let s:glint_path = exepath('glint-language-server')
+if !empty(s:glint_path)
+  call add(lspServers, #{
+  \     name: 'glint-language-server',
+  \     filetype: ['glimmer'],
+  \     path: s:glint_path,
+  \     args: ['--stdio'],
+  \     runIfSearch: ['ember-cli-build.js', '.glintrc.yml', '.glintrc', '.glintrc.json'],
+  \   })
+endif
+
+autocmd User LspSetup call LspAddServer(lspServers)
+
+" Glimmer TypeScript/JavaScript (.gts/.gjs) filetype detection
+" Uses 'glimmer' filetype so Glint LSP activates instead of tsserver.
+" Falls back to typescriptreact syntax for highlighting.
+autocmd BufNewFile,BufRead *.gts set filetype=glimmer | set syntax=typescriptreact
+autocmd BufNewFile,BufRead *.gjs set filetype=glimmer | set syntax=javascriptreact
 
 " center the cursor in the screen vertically
 set scrolloff=10000
@@ -167,6 +219,8 @@ au BufRead,BufNewFile *.md setlocal textwidth=80
 :set hlsearch
 " Clear highlighted search terms by hitting return
 :nnoremap <CR> :nohlsearch<cr>
+" Restore default <CR> in quickfix/location list windows
+autocmd BufReadPost quickfix nnoremap <buffer> <CR> <CR>
 
 " Better case searching
 " http://linuxcommando.blogspot.com/2008/06/smart-case-insensitive-incremental.html
@@ -201,7 +255,7 @@ set tabstop=2
 set expandtab
 set ruler
 set number
-set signcolumn=no
+set signcolumn=yes
 set numberwidth=3
 set backspace=2
 set vb t_vb=
@@ -220,8 +274,6 @@ set synmaxcol=500
 set hidden
 set autoread
 au FocusGained,BufEnter * :checktime
-
-autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
 
 highlight ExtraWhitespace ctermbg=red guibg=red
 match ExtraWhitespace /\s\+$/
@@ -286,11 +338,6 @@ if exists("+undofile")
   set undofile
 endif
 
-" Adds a dummy sign that ensures that the sign column is always shown and
-" won't flicker on/off when syntastic finds errors
-" see http://superuser.com/questions/558876/how-can-i-make-the-sign-column-show-up-all-the-time-even-if-no-signs-have-been-a
-autocmd BufEnter * sign define dummy
-autocmd BufEnter * execute 'sign place 9999 line=1 name=dummy buffer=' . bufnr('')
 
 let g:airline#extensions#branch#enabled = 0
 let g:airline_theme='base16'
@@ -298,27 +345,11 @@ let g:airline_theme='base16'
 " Enable mouse, option-click for normal clicks
 set mouse=a
 
-" Use syntastic for tsuquyomi errors
-let g:tsuquyomi_disable_quickfix = 1
-let g:syntastic_typescript_checkers = ['tsuquyomi', 'tslint'] " You shouldn't use 'tsc' checker.
-
-autocmd FileType typescript call NodeSyntasticChecker('tslint')
-
-function NodeSyntasticChecker(checker_command)
-  let npm_bin_path = substitute(system('npm bin'), '\n\+$', '', '')
-  let local_checker_command = npm_bin_path . '/' . a:checker_command
-  if filereadable(local_checker_command)
-    let g:syntastic_typescript_tslint_exec = local_checker_command
-    let g:syntastic_typescript_tslint_exe = local_checker_command
-  elseif
-    unlet g:syntastic_typescript_tslint_exec
-    unlet g:syntastic_typescript_tslint_exe
-  endif
-endfunction
-
-autocmd FileType typescript nmap <buffer> t : <C-u>echo tsuquyomi#hint()<CR>
-autocmd FileType typescript noremap <buffer> <C-]>d :TsuDefinition<CR>
-autocmd FileType typescript noremap <buffer> <C-]>t :TsuTypeDefinition<CR>
+" LSP keybindings (replacing tsuquyomi)
+autocmd FileType typescript,typescriptreact,glimmer nmap <buffer> t :LspHover<CR>
+autocmd FileType typescript,typescriptreact,glimmer noremap <buffer> <C-]>d :LspGotoDefinition<CR>
+autocmd FileType typescript,typescriptreact,glimmer noremap <buffer> <C-]>t :LspGotoTypeDef<CR>
+autocmd FileType typescript,typescriptreact,glimmer noremap <buffer> <C-]>r :LspShowReferences<CR>
 
 " Open new split panes to right and bottom, which feels more natural
 set splitbelow
