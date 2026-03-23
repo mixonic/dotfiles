@@ -409,3 +409,83 @@ let g:prettier#autoformat_config_present = 0
 let g:prettier#autoformat_require_pragma = 0
 let g:prettier#autoformat_config_files = ['.prettierrc.js']
 let g:prettier#quickfix_enabled = 1
+
+" --- Splash Screen ---
+
+function! SplashContent()
+  let l:lines = []
+  call add(l:lines, '  ╻ ╻   ╻   ┏┳┓')
+  call add(l:lines, '  ┃┏┛   ┃   ┃┃┃')
+  call add(l:lines, '  ┗┛    ╹   ╹ ╹')
+  call add(l:lines, '')
+  call add(l:lines, '  FILES & NAVIGATION              SEARCH')
+  call add(l:lines, '  ;t  fuzzy find files             ;r  ripgrep search (live)')
+  call add(l:lines, '  ;b  recent files/buffers         ;f  Ack (ag) search')
+  call add(l:lines, '  ;d  toggle NERDTree at file      Enter  clear search highlight')
+  call add(l:lines, '  ;x  NERDTree find current')
+  call add(l:lines, '  ;s  swap to previous buffer')
+  call add(l:lines, '')
+  call add(l:lines, '  SAVE & QUIT                     SPLITS & WINDOWS')
+  call add(l:lines, '  ;w  save   ;!w  force save      C-h/j/k/l  move between splits')
+  call add(l:lines, '  ;q  quit   ;!q  force quit      C-s  open in split (fzf)')
+  call add(l:lines, '                                  C-v  open in vsplit (fzf)')
+  call add(l:lines, '')
+  call add(l:lines, '  GIT / FUGITIVE                  EASYMOTION')
+  call add(l:lines, '  ;gs  git status                  ;;w  jump to word forward')
+  call add(l:lines, '  ;gc  git commit                  ;;b  jump to word backward')
+  call add(l:lines, '  ;gb  git blame                   ;;f{c}  find char forward')
+  call add(l:lines, '                                   ;;j  jump to line below')
+  call add(l:lines, '  Status window keys:              ;;k  jump to line above')
+  call add(l:lines, '  s stage  u unstage  = toggle')
+  call add(l:lines, '  - toggle  cc commit  X discard')
+  call add(l:lines, '  g? help  dv diff split')
+  call add(l:lines, '')
+  call add(l:lines, '  COMMENTS / NERDCommenter         SURROUND')
+  call add(l:lines, '  ;cc  comment line/selection       cs({  change surround ( to {')
+  call add(l:lines, '  ;cu  uncomment                    ds"   delete surrounding "')
+  call add(l:lines, '  ;c<Space>  toggle comment         ysiw] surround word with []')
+  call add(l:lines, '  ;ci  invert comments              S" in visual  wrap with "')
+  call add(l:lines, '  ;cs  sexy comment (block)')
+  call add(l:lines, '')
+  call add(l:lines, '  PASTE MODE                       LSP (TS/TSX/JSX)')
+  call add(l:lines, '  yo  paste below (auto-unpaste)   t      hover info')
+  call add(l:lines, '  yO  paste above (auto-unpaste)   C-]d   go to definition')
+  call add(l:lines, '                                   C-]t   go to type def')
+  call add(l:lines, '  :CopyRTF  copy buffer as RTF     C-]r   show references')
+  call add(l:lines, '  >  auto-close HTML tags')
+  call add(l:lines, '')
+  call add(l:lines, '              Press any key to dismiss')
+  return l:lines
+endfunction
+
+function! CheatSheetFilter(winid, key)
+  if a:key ==# "\<CursorHold>" || a:key[0] ==# "\x80"
+    return 0
+  endif
+  call popup_close(a:winid)
+  return 1
+endfunction
+
+function! ShowCheatSheet()
+  call popup_create(SplashContent(), #{
+    \ title: ' Keybindings ',
+    \ pos: 'center',
+    \ border: [],
+    \ borderchars: ['─', '│', '─', '│', '┌', '┐', '┘', '└'],
+    \ padding: [1, 2, 1, 2],
+    \ filter: 'CheatSheetFilter',
+    \ mapping: 0,
+    \ minwidth: 60,
+    \ maxheight: &lines - 4,
+    \ scrollbar: 1,
+    \ highlight: 'Normal',
+    \ borderhighlight: ['Comment'],
+    \ })
+endfunction
+
+augroup SplashScreen
+  autocmd!
+  autocmd VimEnter * if argc() == 0 && line2byte('$') == -1 | call ShowCheatSheet() | endif
+augroup END
+
+nnoremap <silent> <leader> :<C-u>call ShowCheatSheet()<CR>
